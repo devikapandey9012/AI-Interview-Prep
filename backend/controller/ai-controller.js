@@ -9,7 +9,7 @@ import {
   questionAnswerPrompt,
 } from "../utils/prompts-util.js";
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_API_KEY });
 
 // @desc    Generate + SAVE interview questions for a session
 // @route   POST /api/ai/generate-questions
@@ -39,16 +39,22 @@ export const generateInterviewQuestions = async (req, res) => {
         .json({ success: false, message: "Not authorized" });
     }
 
+    // console.log("REQ.USER:", req.user);
+
     const { role, experience, topicsToFocus } = session;
-    console.log("session: ", session);
+
+    // console.log("session: ", session);
 
     //? 2. generate via Gemini
     const prompt = questionAnswerPrompt(role, experience, topicsToFocus, 10);
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
-      contents: prompt,
-    });
-    console.log("response: ", response);
+  model: "gemini-2.5-flash",
+  contents: prompt,
+  config: {
+    responseMimeType: "application/json",
+  },
+});
+    // console.log("response: ", response);
 
     const parts = response.candidates?.[0]?.content?.parts ?? [];
     const rawText = parts

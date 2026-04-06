@@ -4,49 +4,77 @@ export const questionAnswerPrompt = (
   topicsToFocus,
   numberOfQuestions,
 ) => {
-  return `You are a senior engineer conducting a technical interview.
+  return `
+You are a senior software engineer conducting a technical interview.
 
-Generate exactly ${numberOfQuestions} interview questions for the following profile:
+Generate exactly ${numberOfQuestions} interview questions.
+
+Profile:
 - Role: ${role}
 - Experience: ${experience} years
 - Topics to focus on: ${topicsToFocus || "general topics for this role"}
 
-Rules for each question:
-1. The "answer" field must be well-structured using markdown:
-   - Use **bold** for key terms
-   - Use bullet points or numbered lists where appropriate
-   - Add a short \`\`\`js ... \`\`\` code block when relevant (keep it under 10 lines)
-   - Break the answer into short paragraphs — never one wall of text
-2. Answers should be beginner-friendly but technically accurate.
-3. Difficulty should match ${experience} years of experience.
+STRICT INSTRUCTIONS:
+- Return ONLY valid JSON.
+- Do NOT include any explanations, markdown, or extra text.
+- Do NOT wrap the response in \`\`\` or any formatting.
+- The output must be a pure JSON array.
 
-Return ONLY a valid JSON array. No extra text, no markdown wrapper around the JSON.
+Each item in the array must follow this structure:
+{
+  "question": "string",
+  "answer": "string (markdown formatted)"
+}
+
+ANSWER FORMATTING RULES:
+- Use **bold** for key terms
+- Use bullet points or numbered lists where appropriate
+- Include short explanations in paragraphs
+- Include a code block using \`\`\`js if relevant (max 10 lines)
+- Keep answers structured and readable
+- Avoid long walls of text
+
+Example format (structure only, do not copy content):
 
 [
   {
-    "question": "...",
-    "answer": "**Definition:** ...\\n\\n**Key points:**\\n- Point 1\\n- Point 2\\n\\n\`\`\`js\\n// example\\n\`\`\`"
+    "question": "What is REST API?",
+    "answer": "**Definition:** ...\\n\\n**Key points:**\\n- ...\\n- ...\\n\\n\`\`\`js\\n// example\\n\`\`\`"
   }
-]`;
+]
+`;
 };
 
 export const conceptExplainPrompt = (question) => {
-  return `You are a senior developer explaining a concept to a junior developer.
+  return `
+You are a senior developer explaining concepts to a junior developer.
 
-Explain the following interview question in depth:
+Explain the following interview question:
 "${question}"
 
-Structure your explanation like this:
-1. Start with a **one-line definition** in bold.
-2. Explain the concept in 2–3 short paragraphs.
-3. Use bullet points for any list of features, pros/cons, or steps.
-4. If relevant, include a small code example (under 10 lines) in a \`\`\`js block.
-5. End with a **"Key Takeaway"** line summarizing the concept in one sentence.
+STRICT INSTRUCTIONS:
+- Return ONLY valid JSON
+- Do NOT include markdown, backticks, or extra text outside JSON
+- Do NOT wrap the response in code blocks
 
-Return ONLY a valid JSON object in this exact shape. No extra text outside the JSON:
+Output format:
+{
+  "title": "Short concept title (max 5 words)",
+  "explanation": "Markdown formatted explanation as a string"
+}
+
+EXPLANATION RULES:
+- Start with a **one-line definition** in bold
+- Explain in 2–3 short paragraphs
+- Use bullet points where needed
+- Include a small code example (optional, under 10 lines) using \`\`\`js
+- End with a **Key Takeaway** sentence
+
+Example structure (do not copy content):
 
 {
-  "title": "Short, clear concept title (5 words max)",
-  "explanation": "**Definition:** ...\\n\\n Paragraph...\\n\\n**Key Takeaway:** ..."
-}`;
+  "title": "Event Loop in JS",
+  "explanation": "**Definition:** ...\\n\\nParagraphs...\\n\\n**Key Takeaway:** ..."
+}
+`;
 };
